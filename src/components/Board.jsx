@@ -4,11 +4,13 @@ import Square from './Square';
 function Board() {
 
   const [squares, setSquares] = useState(Array(9).fill(null));
+  const [xIsNext, setNext] = useState(true);
 
   function handleClick(i) {
     const newSquares = squares.slice();
-    newSquares[i] = 'X';
+    newSquares[i] = xIsNext ? 'X' : 'O';
     setSquares(newSquares);
+    setNext(prevValue => !prevValue);
   }
 
   function renderSquare(i) {
@@ -20,7 +22,7 @@ function Board() {
     );
   }
 
-  const status = 'Next player: X';
+  const status = 'Next player: ' + (xIsNext ? 'X' : 'O');
 
   return (
     <div>
