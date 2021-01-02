@@ -6,19 +6,20 @@ function Game() {
   const [history, setHistory] = useState([{
     squares: Array(9).fill(null)
   }]);
+  const [step, setStep] = useState(0);
 
   const moves = history.map((step, move)=> {
     const desc = move ?
       'Go to move #' + move :
       'Go to game start';
     return (
-      <li>
-        <button onClick={jumpTo}>{desc}</button>
+      <li key={move}>
+        <button onClick={() => jumpTo(move)}>{desc}</button>
       </li>
     );
   });
   const historyCopy = history;
-  const current = historyCopy[historyCopy.length - 1];
+  const current = historyCopy[step];
   const winner = calculateWinner(current.squares);
   let status;
 
@@ -28,6 +29,11 @@ function Game() {
     status = 'Draw!';
   } else {
     status = 'Next player: ' + (xIsNext ? 'X' : 'O');
+  }
+
+  function jumpTo(stepNo) {
+    setNext((step % 2) === 0);
+    setStep(stepNo);
   }
 
   function calculateWinner(grid) {
@@ -51,19 +57,20 @@ function Game() {
   }
 
   function handleClick(i) {
-    const historyCopy = history;
+    const historyCopy = history.slice(0, step + 1);
     const current = historyCopy[historyCopy.length - 1];
     const newSquares = current.squares.slice();
 
-    if (calculateWinner(newSquares) || current[i]) {
+    if (calculateWinner(newSquares) || newSquares[i]) {
       return;
     }
 
     newSquares[i] = xIsNext ? 'X' : 'O';
     setHistory(prevValue => {
-      return [...prevValue, {squares: newSquares}];
+      return [...historyCopy, {squares: newSquares}];
     });
     setNext(prevValue => !prevValue);
+    setStep(historyCopy.length);
   }
 
   return (
